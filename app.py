@@ -167,22 +167,29 @@ graph = graph_builder.compile()
 
 
 def generate_response(input_text):
+    """Stream responses from the graph execution."""
+    st.info("Generating response...")  # Feedback for user
+    response_container = st.empty()  # Placeholder for live updates
+    
     for step in graph.stream(
-    {"messages": [{"role": "user", "content": input_text}]},
-    stream_mode="values",
-):
-       st.info(step["messages"][-1].pretty_print())
+        {"messages": [{"role": "user", "content": input_text}]},
+        stream_mode="values",
+    ):
+        # Update the placeholder with the latest message
+        response_container.info(step["messages"][-1].pretty_print())
 
 
-st.title("Interview Q&A")
+# Streamlit App
+st.title("Interactive Interview Q&A")
 
-
-with st.form("my_form"):
+with st.form("input_form"):
+    # Text area for user input
     input_message = st.text_area(
-        "Enter text:",
+        "Enter your question or topic:",
         "What are the three key pieces of advice for learning how to code?",
     )
     submitted = st.form_submit_button("Submit")
+    
     if submitted:
         generate_response(input_message)
 
