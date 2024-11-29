@@ -167,8 +167,6 @@ graph = graph_builder.compile()
 
 
 
-
-
 st.title("Interactive Q&A with Tools")
 query = st.text_input("Ask a question:")
 if query:
