@@ -166,18 +166,26 @@ graph_builder.add_edge("generate", END)
 graph = graph_builder.compile()
 
 
+def generate_response(input_text):
+    for step in graph.stream(
+    {"messages": [{"role": "user", "content": input_text}]},
+    stream_mode="values",
+):
+       st.info(step["messages"][-1].pretty_print())
 
-st.title("Interactive Q&A with Tools")
-query = st.text_input("Ask a question:")
-if query:
-    # Initialize the state
-    state = MessagesState()
-    
-    # Add the query to the state
-    state.add_message("human", query)
-    
-    # Execute the graph
-    result = graph.execute(state)
-    
-    # Show the result
-    st.write(result["messages"][0]["content"])
+
+st.title("Interview Q&A")
+
+
+with st.form("my_form"):
+    input_message = st.text_area(
+        "Enter text:",
+        "What are the three key pieces of advice for learning how to code?",
+    )
+    submitted = st.form_submit_button("Submit")
+    if submitted:
+        generate_response(input_message)
+
+
+
+
