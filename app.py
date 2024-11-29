@@ -17,8 +17,8 @@ import streamlit as st
 load_dotenv()
 
 os.environ["LANGCHAIN_TRACING_V2"] = "true"
-os.environ["LANGCHAIN_API_KEY"] = os.getenv("LANGCHAIN_API_KEY")
-os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
+os.environ["LANGCHAIN_API_KEY"] = st.secrets("LANGCHAIN_API_KEY")
+os.environ["OPENAI_API_KEY"] = st.secrets("OPENAI_API_KEY")
 
 llm = ChatOpenAI(model="gpt-4o-mini")
 embeddings = OpenAIEmbeddings(model="text-embedding-3-large")
@@ -168,15 +168,13 @@ graph = graph_builder.compile()
 
 def generate_response(input_text):
     """Stream responses from the graph execution."""
-    st.info("Generating response...")  # Feedback for user
-    response_container = st.empty()  # Placeholder for live updates
     
     for step in graph.stream(
         {"messages": [{"role": "user", "content": input_text}]},
         stream_mode="values",
     ):
         # Update the placeholder with the latest message
-        response_container.info(step["messages"][-1].pretty_print())
+        st.info(step["messages"][-1].pretty_print())
 
 
 # Streamlit App
