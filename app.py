@@ -14,10 +14,6 @@ from langchain.document_loaders import PyPDFLoader
 import streamlit as st
 
 
-st.write("LANGCHAIN_TRACING_V2","true")
-st.write("LANGCHAIN_API_KEY",st.secrets["LANGCHAIN_API_KEY"])
-st.write("OPENAI_API_KEY",st.secrets("OPENAI_API_KEY"))
-
 llm = ChatOpenAI(model="gpt-4o-mini")
 embeddings = OpenAIEmbeddings(model="text-embedding-3-large")
 vector_store = Chroma(
