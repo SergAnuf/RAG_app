@@ -13,7 +13,7 @@ async def extract_html_data(url: str):
 
     # Parse HTML content with BeautifulSoup
     soup = BeautifulSoup(docs[0].page_content, "html.parser")
-    print(docs[0].page_content)
+    print(docs[0].page_content)  # For debugging
 
     # Extract prices and addresses from the specific tags
     listings = []
@@ -24,14 +24,30 @@ async def extract_html_data(url: str):
     # Extract address from <address> tags with the class "m6hnz62 _194zg6t9"
     address_tags = soup.find_all("address", class_="m6hnz62 _194zg6t9")
 
-    # Pair price and address tags together
-    for price_tag, address_tag in zip(price_tags, address_tags):
+    # Extract details (beds, baths, receptions, area) from <p> tags with the class "_1wickv3 _194zg6t9"
+    detail_tags = soup.find_all("p", class_="_1wickv3 _194zg6t9")
+
+    # Pair price, address, and detail tags together
+    for price_tag, address_tag, detail_tag in zip(price_tags, address_tags, detail_tags):
         price = price_tag.get_text(strip=True)
         address = address_tag.get_text(strip=True)
+        
+        # Extract individual details
+        details = detail_tag.find_all("span", class_="_1wickv4")
+        
+        # Assign values to beds, baths, receptions, and area with default 'NA' if missing
+        beds = details[0].get_text(strip=True) if len(details) > 0 else 'NA'
+        baths = details[1].get_text(strip=True) if len(details) > 1 else 'NA'
+        receptions = details[2].get_text(strip=True) if len(details) > 2 else 'NA'
+        area = details[3].get_text(strip=True) if len(details) > 3 else 'NA'
 
         listings.append({
             "property_price": price,
             "property_location": address,
+            "beds": beds,
+            "baths": baths,
+            "receptions": receptions,
+            "area_sq_ft": area,
         })
 
     return listings
@@ -53,20 +69,20 @@ async def scrape_all_pages(base_url: str, max_pages: int):
         all_listings.extend(page_listings)
 
         # Add a polite delay between requests to avoid being flagged
-        await asyncio.sleep(2)
+        await asyncio.sleep(3)
 
     return all_listings
 
 async def main():
     base_url = "https://www.zoopla.co.uk/to-rent/property/london/?price_frequency=per_month&q=London&search_source=to-rent"
-    max_pages = 10  # Set the maximum number of pages to scrape (adjust based on your needs)
+    max_pages = 40  # Set the maximum number of pages to scrape (adjust based on your needs)
 
     listings = await scrape_all_pages(base_url, max_pages)
 
     # Save the data to a CSV file
-    output_file = "zoopla_listings.csv"
+    output_file = "zoopla_listings4.csv"
     with open(output_file, mode="w", newline="", encoding="utf-8") as file:
-        writer = csv.DictWriter(file, fieldnames=["property_price", "property_location"])
+        writer = csv.DictWriter(file, fieldnames=["property_price", "property_location", "beds", "baths", "receptions", "area_sq_ft"])
         writer.writeheader()
         writer.writerows(listings)
 
