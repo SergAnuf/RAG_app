@@ -80,7 +80,7 @@ async def main():
     listings = await scrape_all_pages(base_url, max_pages)
 
     # Save the data to a CSV file
-    output_file = "zoopla_listings4.csv"
+    output_file = "zoopla_listings5.csv"
     with open(output_file, mode="w", newline="", encoding="utf-8") as file:
         writer = csv.DictWriter(file, fieldnames=["property_price", "property_location", "beds", "baths", "receptions", "area_sq_ft"])
         writer.writeheader()
