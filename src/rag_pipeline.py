@@ -70,8 +70,6 @@ def query_or_respond(state: MessagesState):
 tools = ToolNode([document_tool,wikipedia_data])
 
 
-# Step 3: Generate a response using the retrieved content.
-# Step 3: Generate a response using the retrieved content.
 def generate(state: MessagesState):
     """Generate answer."""
     

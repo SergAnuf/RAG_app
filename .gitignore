@@ -4,3 +4,4 @@
 .streamlit
 embedings
 data
+src/__pycache__/
